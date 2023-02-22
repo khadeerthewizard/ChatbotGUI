@@ -35,7 +35,6 @@ public class ChatbotGUI extends JFrame implements ActionListener {
         setVisible(true);
     }
 
-    @Override
     public void actionPerformed(ActionEvent e) {
         String input = userInput.getText().toLowerCase();
         chatArea.append("You: " + input + "\n");
