@@ -98,12 +98,6 @@ public class LoginFrame extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) throws IOException {
-        FileOutputStream fout = new FileOutputStream("admin.ser");
-        ObjectOutputStream Obout = new ObjectOutputStream(fout);
-        Obout.writeObject(new admin("12215670","wizard"));
-        Obout.writeObject(new admin("34","marvel"));
-        fout.close();
-        Obout.close();
         new LoginFrame();
     }
 }
