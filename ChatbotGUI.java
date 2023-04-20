@@ -5,13 +5,13 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.io.*;
 
 import javax.swing.*;
 
 public class ChatbotGUI extends JFrame implements ActionListener {
 
-
-    //Declaring all Variables\
+//variables
     private JTextField userInput;
     private JPanel inputPanel;
     private JScrollPane scrollPane;
@@ -28,21 +28,26 @@ public class ChatbotGUI extends JFrame implements ActionListener {
     public String user="student";
     public int userStage=1;
     String regNO;
+    FileOutputStream fout;
+    FileInputStream fin;
+    ObjectOutputStream Obout;
+    ObjectInputStream Obin;
+    public String name="Null";
+    public String number="Null";
+    ArrayList<applicant> applicants = new ArrayList<applicant>();
+//variables
 
-    //Defining the database of Student and their methods
+//methods
     public static String[][] studentData= {
         {"12215670","Khadeer","8.29","80000","86%"},
         {"12221976","Pranay","8","80001","50%"},
         {"12215228","Sameer","9","89892","100%"},
         {"12233442","Venky","10","10200","200%"},
         {"12214457","CallmeYas","11[ExtraOrdinary]","163762222","50%"}
-     };
+    };
 
-    public static ArrayList<String> applicantData = new ArrayList<String>();
 
-     //defining course info
-
-     public static String[][] CoursesData = 
+    public static String[][] CoursesData = 
      {
         {"Computer Science And Engineering[CSE]","Computer labs","Software and tools",
         "Classroom technology","Online resources","Networking events",
@@ -76,9 +81,10 @@ public class ChatbotGUI extends JFrame implements ActionListener {
         "Engine component manufacturing labs","Vehicle electronics and software labs"}
      };
 
-     String[] FacilitiesData = { "Non-vegetarian food allowed", "Residential Facility", "Free Wifi in Hostels",
+    String[] FacilitiesData = { "Non-vegetarian food allowed", "Residential Facility", "Free Wifi in Hostels",
             "Expert Faculity", "Internship Opertunities", "Foreign exchange programmes",
             "Vast Library", "Healthy Environment", "Supervised by Team Wizard" };
+//methods
 
     public String getCgpa (String[][] data,String regNo) {
         for(int i=0;i<data.length;i++){
@@ -104,8 +110,6 @@ public class ChatbotGUI extends JFrame implements ActionListener {
         }
         return "Not Found in the Data";
     }
-
-    //defining to get courses method
     public void getCourses(String[][] course){
         int j = 0 ;
         for(int i = 0 ; i < course.length ; i++){
@@ -115,26 +119,18 @@ public class ChatbotGUI extends JFrame implements ActionListener {
         j++;
         chatArea.append(j+".exit.\n");
     }
+//methods
 
-
-    //end of student database and methods
-
-
+//chatbot
     public ChatbotGUI() {
-        applicantData.add("Pranay");
-        applicantData.add("7995670276");
-        applicantData.add("Sriram");
-        applicantData.add("8734567987");
         setTitle("Chatbot");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1100, 900);
+        setSize(900, 900);
         setResizable(false);
         setBackground(Color.DARK_GRAY);
         setLocationRelativeTo(null);
 
-        //admin
-
-        //navbar setting
+        //all buttons settings
         navBar = new JPanel();
         navBar.setPreferredSize(new Dimension(getWidth(), 40));
         navBar.setLayout(new BorderLayout());
@@ -142,8 +138,6 @@ public class ChatbotGUI extends JFrame implements ActionListener {
         homeButton = new JButton("CHATBOT");
         aboutButton = new JButton("ADMIN LOGIN (TEAM WIZARD)");
         contactButton = new JButton("ABOUT US");
-
-        // Customize the navigation bar buttons
         homeButton.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 16));
         homeButton.setBackground(Color.BLACK);
         homeButton.setForeground(Color.WHITE);
@@ -157,8 +151,9 @@ public class ChatbotGUI extends JFrame implements ActionListener {
         contactButton.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 16));
         contactButton.setBackground(Color.BLACK);
         contactButton.setForeground(Color.WHITE);
+        contactButton.setActionCommand("ABOUT");
+        contactButton.addActionListener(this);
 
-        // Add the navigation bar buttons to the navigation bar panel
         navBar.add(homeButton, BorderLayout.WEST);
         navBar.add(aboutButton, BorderLayout.CENTER);
         navBar.add(contactButton, BorderLayout.EAST);
@@ -168,9 +163,9 @@ public class ChatbotGUI extends JFrame implements ActionListener {
 
         getContentPane().add(navBar, BorderLayout.NORTH);
 
-        //end of navbar
+        //end of button settings
         
-        //user input 
+        // user input field
         userInput = new JTextField(1);
         userInput.setEditable(false);
         userInput.setPreferredSize(new Dimension(200,50));
@@ -189,7 +184,7 @@ public class ChatbotGUI extends JFrame implements ActionListener {
         chatArea.setForeground(Color.WHITE);
         chatArea.setBorder(null);
 
-        //adding chatarea to scrollpane
+        //scrollpane
         scrollPane = new JScrollPane(chatArea);
         scrollPane.setBorder(BorderFactory.createMatteBorder(3, 3, 0, 3, Color.BLACK));
 
@@ -198,26 +193,27 @@ public class ChatbotGUI extends JFrame implements ActionListener {
         inputPanel.setLayout(new BorderLayout());
         inputPanel.setBorder(BorderFactory.createMatteBorder(0, 3, 3, 3, Color.BLACK));
 
-
+        //config of start button
         sendButton = new JButton("  S T A R T  ");
         sendButton.setFont(new Font(Font.MONOSPACED,Font.BOLD,24));
-        sendButton.setPreferredSize(new Dimension(100,100));
+        sendButton.setPreferredSize(new Dimension(20,100));
         userInput.setEditable(true);
 
+        //to make send button active on pressing enter on keyboard
         sendButton.addActionListener(this);
         userInput.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // Programmatically click the sendButton button
                 sendButton.doClick();
             }
         });
         
+        //transition from start to send
         sendButton.setBackground(Color.GRAY);
         sendButton.setForeground(Color.WHITE);
         sendButton.setBorder(BorderFactory.createMatteBorder(3, 2, 3, 2,Color.GRAY));
         inputPanel.add(sendButton, BorderLayout.CENTER);
         
-
+        //prechat stuff
         add(scrollPane, BorderLayout.CENTER);
         add(inputPanel, BorderLayout.SOUTH);
         chatArea.append("\n");
@@ -235,8 +231,8 @@ public class ChatbotGUI extends JFrame implements ActionListener {
         chatArea.append("\n");
         chatArea.append("                                                What can this Chatbot Do?\n");
         chatArea.append("                                        1.Shows the marks, attendance of Students\n");
-        chatArea.append("                                                   2.Updates Frequently\n");
-        chatArea.append("                                 3.If anywhere program does not respond just enter 'exit'\n");
+        chatArea.append("                                                   2.Admin Login\n");
+        chatArea.append("                                 3.If anywhere program does not respond just enter 'exit' or  'menu'\n");
         chatArea.append("                              4.If any error report the bug or issue to khadeer2204@gmail.com\n");
         chatArea.append("                                   5.Shows What Courses are Available in the University\n");
         chatArea.append("                                           6.Can Directly Apply to Any Course\n");
@@ -254,6 +250,10 @@ public class ChatbotGUI extends JFrame implements ActionListener {
 
         if(e.getActionCommand().equals("ADMIN")){
             new LoginFrame();
+            return;
+        }
+        if(e.getActionCommand().equals("ABOUT")){
+            new AboutFrame();
             return;
         }
 
@@ -297,7 +297,7 @@ public class ChatbotGUI extends JFrame implements ActionListener {
         }
 
 
-        //USERSTAGE 1 whether a student or applicant
+
         if(userStage==1){
             chatArea.append("----------------------------------------------------------------------------------------------------------------------------\n");
             chatArea.append("Chatbot:   Welcome to  Wizard University!\n");
@@ -308,7 +308,7 @@ public class ChatbotGUI extends JFrame implements ActionListener {
             userStage++;
         }
 
-        //USERSTAGE 2 prints to take reg no
+
         else if(userStage==2 && input.equals("1")){
             user="student";
             chatArea.append("----------------------------------------------------------------------------------------------------------------------------\n");
@@ -329,7 +329,7 @@ public class ChatbotGUI extends JFrame implements ActionListener {
             chatArea.append("----------------------------------------------------------------------------------------------------------------------------\n");
         }
 
-        //USERSTAGE check reg No
+
         else if(userStage==3 && user.equals("student")){
             for(int i=0;i<studentData.length;i++){
                 if(studentData[i][0].equals(input)){
@@ -410,14 +410,35 @@ public class ChatbotGUI extends JFrame implements ActionListener {
             phoneFlag=1;
         }
         else if(userStage==3 && user.equals("Applicant") && phoneFlag==1){
-            applicantData.add(input);
+            number=input;
             chatArea.append("----------------------------------------------------------------------------------------------------------------------------\n");
             chatArea.append("Enter your name: \n");
             chatArea.append("----------------------------------------------------------------------------------------------------------------------------\n");
             phoneFlag=2;
         }
         else if(userStage==3 && user.equals("Applicant") && phoneFlag==2){
-            applicantData.add(input);
+            name=input;
+            applicants.add(new applicant(number, name));
+            try {
+                fout = new FileOutputStream("applied.ser");
+            } catch (FileNotFoundException e1) {
+                e1.printStackTrace();
+            }
+            
+            try {
+                Obout = new ObjectOutputStream(fout);
+                Obout.close();
+                fout.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            try {
+                Obout.writeObject(applicants);
+                Obout.close();
+                fout.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
             chatArea.append("Applied");
         }
 

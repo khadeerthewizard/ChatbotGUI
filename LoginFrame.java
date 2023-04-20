@@ -1,6 +1,23 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
+import java.util.ArrayList;
+
+class admin implements Serializable{
+    String username;
+    String password;
+    admin(String username, String password){
+        this.password=password;
+        this.username=username;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public String getUsername() {
+        return username;
+    }
+}
 
 public class LoginFrame extends JFrame implements ActionListener {
 
@@ -8,11 +25,6 @@ public class LoginFrame extends JFrame implements ActionListener {
     private JTextField tf;
     private JPasswordField pf;
     private JButton loginBtn;
-    String[][] admindata={
-        {"12215670","wizard"},
-        {"34","marvel"}
-    };
-    
 
     public LoginFrame() {
         setTitle("Login");
@@ -42,23 +54,56 @@ public class LoginFrame extends JFrame implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        String username = tf.getText();
-        String password = new String(pf.getPassword());
+        ArrayList<admin> adminsFromFile = readAdminsFromFile("admin.ser");
+        String inputUsername = tf.getText();
+        String inputPassword = pf.getText();
 
-        for(int i=0;i<admindata.length;i++){
-            if (username.equals(admindata[i][0]) && password.equals(admindata[i][1])) {
-                JOptionPane.showMessageDialog(this, "Login successful");
-                new AdminFrame();
+        boolean loginSuccessful = false;
+        for (admin adm : adminsFromFile) {
+            if (adm.getUsername().equals(inputUsername) && adm.getPassword().equals(inputPassword)) {
+                loginSuccessful = true;
                 break;
             }
-            if(i==admindata.length-1){
-                JOptionPane.showMessageDialog(this, "Login Failed");
-            }
+        }
+
+        if (loginSuccessful) {
+            JOptionPane.showMessageDialog(this, "Login successful");
+            new AdminFrame();
+        } else {
+            JOptionPane.showMessageDialog(this, "Login failed");
         }
     }
 
-    public static void main(String[] args) {
+    public static ArrayList<admin> readAdminsFromFile(String fileName) {
+        ArrayList<admin> admins = new ArrayList<>();
+        try {
+            FileInputStream fileIn = new FileInputStream(fileName);
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            Object obj = in.readObject();
+            while (obj != null) {
+                if (obj instanceof admin) {
+                    admins.add((admin) obj);
+                }
+                obj = in.readObject();
+            }
+            in.close();
+            fileIn.close();
+        } catch (EOFException e) {
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return admins;
+    }
+
+    public static void main(String[] args) throws IOException {
+        FileOutputStream fout = new FileOutputStream("admin.ser");
+        ObjectOutputStream Obout = new ObjectOutputStream(fout);
+        Obout.writeObject(new admin("12215670","wizard"));
+        Obout.writeObject(new admin("34","marvel"));
+        fout.close();
+        Obout.close();
         new LoginFrame();
     }
 }
-

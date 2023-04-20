@@ -30,9 +30,9 @@ public class AdminFrame extends JFrame implements ActionListener {
     
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == viewApplicantsButton) {
-            new ViewApplicant(ChatbotGUI.applicantData);
+            new ViewApplicant();
         } else if (e.getSource() == changeCoursesButton) {
-            // TODO: Implement code to change available courses
+            JOptionPane.showMessageDialog(this, "Under Development");
         }
     }
     
