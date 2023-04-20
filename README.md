@@ -1,9 +1,11 @@
 # ChatbotGUI
-A GUI based Chatbot using Java .
+A GUI based Chatbot using Java.
 It uses Jframe for Graphical Interface
-It uses three different classes
-Main class is ChatBotGUI which uses the other class files in runtime
-Data is Stored in multidimensional arrays for predefined database
-Data added at runtime is stored in ArrayLists for dynamic memory allocation
+The data is stored in Array list of objects which is then stored in file using serialization.
+
+What can it Do?
+View marks and attendance and fee
+Anyone can apply to university
+Admin login 
 
 To report any bug or issue please report to khadeer2204@gmail.com
